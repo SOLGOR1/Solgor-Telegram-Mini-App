@@ -34,7 +34,7 @@
 }
 
 .circle-outer {
-  background: linear-gradient(to bottom, #575def, #202731);
+  background: linear-gradient(to bottom, #ffcc00, #ff9900); /* Gelb-Orange Verlauf */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,7 +45,7 @@
 }
 
 .circle-inner {
-  background: radial-gradient(circle, #4960b2, #282e3e);
+  background: radial-gradient(circle, #ffd700, #ff8c00); /* Gelb-Orange Verlauf */
   display: flex;
   align-items: center;
   justify-content: center;
