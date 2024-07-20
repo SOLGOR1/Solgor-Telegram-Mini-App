@@ -115,8 +115,8 @@ const App: React.FC = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // Ersetze dies mit einer tatsächlichen Anfrage an deinen Server, um die Benutzer-ID zu erhalten
-                const response = await fetch('/auth/telegram'); // Beispiel URL
+                // Ersetze dies durch die tatsächliche URL zu deinem Backend
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/telegram`);
                 const data = await response.json();
                 setUserId(data.id);
                 setUserName(data.username || 'No Name');
@@ -127,7 +127,6 @@ const App: React.FC = () => {
                     const userData = userSnap.data();
                     setPoints(userData.points || points); // Initialize points if available
                 } else {
-                    // Wenn der Benutzer noch nicht existiert, initialisiere Punkte hier
                     await setDoc(userDoc, { points: points }, { merge: true });
                 }
             } catch (error) {
@@ -135,6 +134,7 @@ const App: React.FC = () => {
                 setUserName('No Name');
             }
         };
+        
 
         fetchUserData();
     }, []);

@@ -10,7 +10,6 @@
       { "src": "/api/(.*)", "dest": "/api/$1" }
     ],
     "env": {
-      "API_URL": "https://api.telegram.org/bot7340162536:AAH8UKwE9-Gf_ZOZOgjJr6k1-bC34qjQgwA/getMe"
+      "API_URL": "https://api.telegram.org/bot7340162536:AAH8UKwE9-Gf_ZOZOgjJr6k1-bC34qjQgwA"
     }
   }
-  
