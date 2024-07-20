@@ -114,7 +114,8 @@ const App: React.FC = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const userDoc = doc(db, 'users', 'userId'); // Replace 'userId' with actual user ID
+                const userId = 'userId'; // Hier sollte die tatsächliche Benutzer-ID eingefügt werden
+                const userDoc = doc(db, 'users', userId);
                 const userSnap = await getDoc(userDoc);
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
@@ -134,7 +135,8 @@ const App: React.FC = () => {
     useEffect(() => {
         const updateUserPoints = async () => {
             try {
-                const userDoc = doc(db, 'users', 'userId'); // Replace 'userId' with actual user ID
+                const userId = 'userId'; // Hier sollte die tatsächliche Benutzer-ID eingefügt werden
+                const userDoc = doc(db, 'users', userId);
                 await setDoc(userDoc, { points }, { merge: true });
             } catch (error) {
                 console.error('Error updating user points:', error);
