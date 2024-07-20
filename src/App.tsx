@@ -115,8 +115,7 @@ const App: React.FC = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // Holen der Umgebungsvariable und Hinzufügen des Endpunkts
-                const response = await fetch(`${process.env.API_URL}/getMe`);
+                const response = await fetch('https://api.telegram.org/bot7340162536:AAH8UKwE9-Gf_ZOZOgjJr6k1-bC34qjQgwA/getMe');
                 const data = await response.json();
                 setUserId(data.id);
                 setUserName(data.username || 'No Name');
