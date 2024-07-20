@@ -115,18 +115,18 @@ const App: React.FC = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                // Ersetze dies durch die tatsächliche URL zu deinem Backend
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/telegram`);
+                const response = await fetch(`${process.env.API_URL}/auth/telegram`); // Beispiel URL, die du anpassen solltest
                 const data = await response.json();
                 setUserId(data.id);
                 setUserName(data.username || 'No Name');
-                
+        
                 const userDoc = doc(db, 'users', data.id);
                 const userSnap = await getDoc(userDoc);
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
                     setPoints(userData.points || points); // Initialize points if available
                 } else {
+                    // Wenn der Benutzer noch nicht existiert, initialisiere Punkte hier
                     await setDoc(userDoc, { points: points }, { merge: true });
                 }
             } catch (error) {
