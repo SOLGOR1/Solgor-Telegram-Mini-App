@@ -115,17 +115,21 @@ const App: React.FC = () => {
         const fetchUserData = async () => {
             try {
                 const userId = 'userId'; // Hier sollte die tatsächliche Benutzer-ID eingefügt werden
+                console.log('Fetching user data for user ID:', userId); // Debugging
                 const userDoc = doc(db, 'users', userId);
                 const userSnap = await getDoc(userDoc);
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
+                    console.log('User data fetched successfully:', userData); // Debugging
                     setUserName(userData.name || 'No Name');
                     setPoints(userData.points || points); // Initialize points if available
                 } else {
                     console.log('No such document!');
+                    setUserName('No Name');
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
+                setUserName('No Name');
             }
         };
 
@@ -136,8 +140,10 @@ const App: React.FC = () => {
         const updateUserPoints = async () => {
             try {
                 const userId = 'userId'; // Hier sollte die tatsächliche Benutzer-ID eingefügt werden
+                console.log('Updating points for user ID:', userId); // Debugging
                 const userDoc = doc(db, 'users', userId);
                 await setDoc(userDoc, { points }, { merge: true });
+                console.log('User points updated successfully'); // Debugging
             } catch (error) {
                 console.error('Error updating user points:', error);
             }
