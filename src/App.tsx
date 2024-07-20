@@ -30,6 +30,7 @@ const App: React.FC = () => {
     const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
     const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
     const [userName, setUserName] = useState('Loading...');
+    const [userId, setUserId] = useState<string | null>(null);
 
     const calculateTimeLeft = (targetHour: number) => {
         const now = new Date();
@@ -114,18 +115,20 @@ const App: React.FC = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const userId = 'userId'; // Hier sollte die tatsächliche Benutzer-ID eingefügt werden
-                console.log('Fetching user data for user ID:', userId); // Debugging
-                const userDoc = doc(db, 'users', userId);
+                // Ersetze dies mit einer tatsächlichen Anfrage an deinen Server, um die Benutzer-ID zu erhalten
+                const response = await fetch('/auth/telegram'); // Beispiel URL
+                const data = await response.json();
+                setUserId(data.id);
+                setUserName(data.username || 'No Name');
+                
+                const userDoc = doc(db, 'users', data.id);
                 const userSnap = await getDoc(userDoc);
                 if (userSnap.exists()) {
                     const userData = userSnap.data();
-                    console.log('User data fetched successfully:', userData); // Debugging
-                    setUserName(userData.name || 'No Name');
                     setPoints(userData.points || points); // Initialize points if available
                 } else {
-                    console.log('No such document!');
-                    setUserName('No Name');
+                    // Wenn der Benutzer noch nicht existiert, initialisiere Punkte hier
+                    await setDoc(userDoc, { points: points }, { merge: true });
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -137,20 +140,19 @@ const App: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        if (!userId) return;
+
         const updateUserPoints = async () => {
             try {
-                const userId = 'userId'; // Hier sollte die tatsächliche Benutzer-ID eingefügt werden
-                console.log('Updating points for user ID:', userId); // Debugging
                 const userDoc = doc(db, 'users', userId);
                 await setDoc(userDoc, { points }, { merge: true });
-                console.log('User points updated successfully'); // Debugging
             } catch (error) {
                 console.error('Error updating user points:', error);
             }
         };
 
         updateUserPoints();
-    }, [points]);
+    }, [points, userId]);
 
     return (
         <div className="bg-black flex justify-center">
