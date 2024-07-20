@@ -7,6 +7,7 @@ import Settings from './icons/Settings';
 import Mine from './icons/Mine';
 import Friends from './icons/Friends';
 import Coins from './icons/Coins';
+import { db, doc, getDoc, setDoc } from './firebase'; // Firebase import
 
 const App: React.FC = () => {
   const levelNames = [
@@ -87,12 +88,12 @@ const App: React.FC = () => {
       card.style.transform = '';
     }, 100);
 
-    setPoints(points + pointsToAdd);
-    setClicks([...clicks, { id: Date.now(), x: e.pageX, y: e.pageY }]);
+    setPoints(prevPoints => prevPoints + pointsToAdd);
+    setClicks(prevClicks => [...prevClicks, { id: Date.now(), x: e.pageX, y: e.pageY }]);
   };
 
   const handleAnimationEnd = (id: number) => {
-    setClicks((prevClicks) => prevClicks.filter(click => click.id !== id));
+    setClicks(prevClicks => prevClicks.filter(click => click.id !== id));
   };
 
   const calculateProgress = () => {
@@ -130,6 +131,42 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [profitPerHour]);
 
+  // Firebase interaction to load and update user data
+  const [userName, setUserName] = useState('Loading...');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userDoc = doc(db, 'users', 'userId'); // Replace 'userId' with actual user ID
+        const userSnap = await getDoc(userDoc);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          setUserName(userData.name || 'No Name');
+          setPoints(userData.points || points); // Initialize points if available
+        } else {
+          console.log('No such document!');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const updateUserPoints = async () => {
+      try {
+        const userDoc = doc(db, 'users', 'userId'); // Replace 'userId' with actual user ID
+        await setDoc(userDoc, { points }, { merge: true });
+      } catch (error) {
+        console.error('Error updating user points:', error);
+      }
+    };
+
+    updateUserPoints();
+  }, [points]);
+
   return (
     <div className="bg-black flex justify-center">
       <div className="w-full bg-black text-white h-screen font-bold flex flex-col max-w-xl">
@@ -139,7 +176,7 @@ const App: React.FC = () => {
               <Hamster size={24} className="text-[#d4d4d4]" />
             </div>
             <div>
-              <p className="text-sm">TEST (CEO)</p>
+              <p className="text-sm">{userName} (CEO)</p>
             </div>
           </div>
           <div className="flex items-center justify-between space-x-4 mt-1">
