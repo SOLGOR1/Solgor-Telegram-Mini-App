@@ -1,19 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "target": "ES2020", // Für Node.js und moderne Features
+    "module": "commonjs", // Node.js verwendet CommonJS-Module
+    "lib": ["ES2020"], // Nur notwendige Bibliotheken für Node.js
+    "outDir": "./dist", // Ausgabeverzeichnis für kompilierte Dateien
+    "rootDir": "./src", // Verzeichnis für TypeScript-Quellcodes
+    "strict": true, // Strikte Typprüfungen aktivieren
+    "esModuleInterop": true, // Unterstützung für ES6 Module
+    "skipLibCheck": true, // Überprüft keine Typen in Node.js-Deklarationen
+    "forceConsistentCasingInFileNames": true, // Konsistente Groß- und Kleinschreibung von Dateinamen
+    "moduleResolution": "node", // Modulerkennung wie in Node.js
+    "resolveJsonModule": true // Unterstützung für das Importieren von JSON-Modulen
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts"], // Alle TypeScript-Dateien im src-Verzeichnis einbeziehen
+  "exclude": ["node_modules"] // node_modules ausschließen
 }
