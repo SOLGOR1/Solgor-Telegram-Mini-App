@@ -1,33 +1,56 @@
-// server.js
 const express = require('express');
-const crypto = require('crypto');
+const { Client, TdObject } = require('tdl'); // Beispielhafte TDLib-Integration, bitte die richtige Bibliothek prüfen
+const { TDLib } = require('tdl-tdlib-addon'); // Beispielhafte TDLib-Integration, bitte die richtige Bibliothek prüfen
+const bodyParser = require('body-parser');
+
 const app = express();
+const port = 3001;
 
-app.get('/auth/telegram', (req, res) => {
-    const secret = 'your_bot_token';  // Ersetze dies mit deinem echten Bot-Token
-    const hash = req.query.hash;
-    const dataCheckString = Object.keys(req.query)
-        .filter(key => key !== 'hash')
-        .sort()
-        .map(key => `${key}=${req.query[key]}`)
-        .join('\n');
+app.use(bodyParser.json());
 
-    const hmac = crypto.createHmac('sha256', secret).update(dataCheckString).digest('hex');
-
-    if (hmac !== hash) {
-        return res.status(403).send('Unauthorized');
-    }
-
-    // Gültige Anmeldung, sende Benutzerinformationen an die App zurück
-    res.json({
-        id: req.query.id,
-        first_name: req.query.first_name,
-        last_name: req.query.last_name,
-        username: req.query.username,
-        photo_url: req.query.photo_url
-    });
+const client = new Client(new TDLib(), {
+    apiId: 'YOUR_API_ID',
+    apiHash: 'YOUR_API_HASH',
+    databaseDirectory: './db',
+    useMessageDatabase: true,
+    useSecretChats: true,
+    systemLanguageCode: 'en-GB',
+    deviceModel: 'Node.js Server',
+    applicationVersion: '1.0',
 });
 
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
+client.on('update', update => {
+    if (update['@type'] === 'updateAuthorizationState') {
+        const authState = update.authorization_state;
+        // Handle different auth states here
+        if (authState['@type'] === 'authorizationStateWaitPhoneNumber') {
+            // Prompt the user to enter their phone number
+        } else if (authState['@type'] === 'authorizationStateWaitCode') {
+            // Prompt the user to enter the code they received
+        } else if (authState['@type'] === 'authorizationStateReady') {
+            // User is authorized
+        }
+    }
+});
+
+app.post('/auth/telegram', async (req, res) => {
+    const { phoneNumber, code } = req.body;
+
+    try {
+        if (phoneNumber) {
+            await client.invoke({ '@type': 'setAuthenticationPhoneNumber', phone_number: phoneNumber });
+        }
+
+        if (code) {
+            await client.invoke({ '@type': 'checkAuthenticationCode', code: code });
+        }
+
+        res.send({ status: 'ok' });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
