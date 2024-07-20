@@ -115,20 +115,13 @@ const App: React.FC = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch(`${process.env.API_URL}/auth/telegram`); // Beispiel URL, die du anpassen solltest
+                // Holen der Umgebungsvariable und Hinzufügen des Endpunkts
+                const response = await fetch(`${process.env.API_URL}/getMe`);
                 const data = await response.json();
                 setUserId(data.id);
                 setUserName(data.username || 'No Name');
         
-                const userDoc = doc(db, 'users', data.id);
-                const userSnap = await getDoc(userDoc);
-                if (userSnap.exists()) {
-                    const userData = userSnap.data();
-                    setPoints(userData.points || points); // Initialize points if available
-                } else {
-                    // Wenn der Benutzer noch nicht existiert, initialisiere Punkte hier
-                    await setDoc(userDoc, { points: points }, { merge: true });
-                }
+                // Datenbankoperationen...
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 setUserName('No Name');
