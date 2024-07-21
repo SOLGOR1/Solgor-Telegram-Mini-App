@@ -1,6 +1,6 @@
 // Importiere Firebase-Funktionen
 import { initializeApp } from 'firebase/app';
-import { getFirestore, } from 'firebase/firestore';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 // Firebase-Konfigurationsobjekt
 const firebaseConfig = {
@@ -19,4 +19,4 @@ const app = initializeApp(firebaseConfig);
 // Initialisiere Firestore
 const db = getFirestore(app);
 
-export { db };
+export { db, doc, setDoc };
