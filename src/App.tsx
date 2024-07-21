@@ -7,8 +7,7 @@ import Settings from './icons/Settings';
 import Mine from './icons/Mine';
 import Friends from './icons/Friends';
 import Coins from './icons/Coins';
-import { db } from './firebase';
-import { doc, setDoc } from 'firebase/firestore'; // Importiere die Firestore Funktionen
+import { db, doc, setDoc } from './firebase';
 
 const App: React.FC = () => {
     const levelNames = [
