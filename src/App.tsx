@@ -7,16 +7,25 @@ import Settings from './icons/Settings';
 import Mine from './icons/Mine';
 import Friends from './icons/Friends';
 import Coins from './icons/Coins';
-import { db, doc, setDoc } from './firebase';
+import { db, doc, setDoc } from './firebase'; // Importiere doc und setDoc
+
+// Debounce Funktion zur Vermeidung häufiger Firestore-Updates
+const debounce = (func: Function, delay: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+    };
+};
 
 const App: React.FC = () => {
     const levelNames = [
-        "Bronze Ape", "Silver Ape", "Gold Ape", "Platinum Ape", "Diamond Ape", 
+        "Bronze Ape", "Silver Ape", "Gold Ape", "Platinum Ape", "Diamond Ape",
         "Epic Ape", "Legendary Ape", "Master Ape", "GrandMaster Ape", "Lord Ape"
     ];
 
     const levelMinPoints = [
-        0, 5000, 25000, 100000, 1000000, 2000000, 10000000, 50000000, 
+        0, 5000, 25000, 100000, 1000000, 2000000, 10000000, 50000000,
         100000000, 1000000000
     ];
 
@@ -24,7 +33,7 @@ const App: React.FC = () => {
     const [points, setPoints] = useState(22749365);
     const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
     const pointsToAdd = 11;
-    const profitPerHour = 126420;
+    const hourlyProfit = 126420; // Evtl. benutzte Variable hier definiert
 
     const [dailyRewardTimeLeft, setDailyRewardTimeLeft] = useState("");
     const [dailyCipherTimeLeft, setDailyCipherTimeLeft] = useState("");
@@ -32,6 +41,7 @@ const App: React.FC = () => {
     const [userName, setUserName] = useState('Loading...');
     const [userId, setUserId] = useState<string | null>(null);
 
+    // Berechnung der verbleibenden Zeit bis zur nächsten Belohnung
     const calculateTimeLeft = (targetHour: number) => {
         const now = new Date();
         const target = new Date(now);
@@ -105,32 +115,12 @@ const App: React.FC = () => {
     };
 
     useEffect(() => {
-        const pointsPerSecond = Math.floor(profitPerHour / 3600);
+        const pointsPerSecond = Math.floor(hourlyProfit / 3600);
         const interval = setInterval(() => {
             setPoints(prevPoints => prevPoints + pointsPerSecond);
         }, 1000);
         return () => clearInterval(interval);
-    }, [profitPerHour]);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch('https://api.telegram.org/bot7340162536:AAH8UKwE9-Gf_ZOZOgjJr6k1-bC34qjQgwA/getMe');
-                const data = await response.json();
-                console.log(data);  // Debug: Schau dir die Struktur der Antwort an
-                setUserId(data.id);  // Überprüfe, ob dies der richtige Wert ist
-                setUserName(data.username || 'No Name');
-        
-                // Datenbankoperationen...
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-                setUserName('No Name');
-            }
-        };
-        
-
-        fetchUserData();
-    }, []);
+    }, [hourlyProfit]);
 
     useEffect(() => {
         if (!userId) return;
@@ -146,7 +136,14 @@ const App: React.FC = () => {
             }
         };
 
-        updateUserPoints();
+        // Debounce die Firestore-Updates, um die Häufigkeit der Aktualisierungen zu reduzieren
+        const debouncedUpdate = debounce(updateUserPoints, 1000);
+        debouncedUpdate();
+
+        return () => {
+            // Hier können ggf. Cleanup-Operationen durchgeführt werden
+        };
+
     }, [points, userId]);
 
     return (
@@ -182,7 +179,7 @@ const App: React.FC = () => {
                                 <p className="text-xs text-[#85827d] font-medium">Profit per hour</p>
                                 <div className="flex items-center justify-center space-x-1">
                                     <img src={dollarCoin} alt="Dollar Coin" className="w-[18px] h-[18px]" />
-                                    <p className="text-sm">{formatProfitPerHour(profitPerHour)}</p>
+                                    <p className="text-sm">{formatProfitPerHour(hourlyProfit)}</p>
                                     <Info size={20} className="text-[#43433b]" />
                                 </div>
                             </div>
