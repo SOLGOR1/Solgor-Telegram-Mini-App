@@ -7,7 +7,8 @@ import Settings from './icons/Settings';
 import Mine from './icons/Mine';
 import Friends from './icons/Friends';
 import Coins from './icons/Coins';
-import { db, doc, getDoc, setDoc } from './firebase';
+import { db } from './firebase';
+import { doc, setDoc } from 'firebase/firestore'; // Importiere die Firestore Funktionen
 
 const App: React.FC = () => {
     const levelNames = [
@@ -138,9 +139,9 @@ const App: React.FC = () => {
         const updateUserPoints = async () => {
             try {
                 const userDoc = doc(db, 'users', userId);
-                console.log(`Updating user: ${userId} with points: ${points}`);  // Debug
+                console.log(`Updating user: ${userId} with points: ${points}`); // Debug
                 await setDoc(userDoc, { points }, { merge: true });
-                console.log('User points updated successfully');  // Debug
+                console.log('User points updated successfully'); // Debug
             } catch (error) {
                 console.error('Error updating user points:', error);
             }
