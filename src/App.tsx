@@ -19,6 +19,12 @@ const debounce = (func: Function, delay: number) => {
 };
 
 const App: React.FC = () => {
+    const handleOAuthLogin = () => {
+        const oauthUrl = `https://oauth.telegram.org/embed/Solgor-Test1?origin=${encodeURIComponent('https://solgor-telegram-mini-app.vercel.app')}&return_to=${encodeURIComponent('https://solgor-telegram-mini-app.vercel.app/')}&size=large&request_access=write`;
+
+        // Weiterleiten des Benutzers zur OAuth-URL
+        window.location.href = oauthUrl;
+    };
     const levelNames = [
         "Bronze Ape", "Silver Ape", "Gold Ape", "Platinum Ape", "Diamond Ape",
         "Epic Ape", "Legendary Ape", "Master Ape", "GrandMaster Ape", "Lord Ape"
