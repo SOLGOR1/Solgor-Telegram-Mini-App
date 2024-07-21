@@ -117,7 +117,8 @@ const App: React.FC = () => {
             try {
                 const response = await fetch('https://api.telegram.org/bot7340162536:AAH8UKwE9-Gf_ZOZOgjJr6k1-bC34qjQgwA/getMe');
                 const data = await response.json();
-                setUserId(data.id);
+                console.log(data);  // Debug: Schau dir die Struktur der Antwort an
+                setUserId(data.id);  // Überprüfe, ob dies der richtige Wert ist
                 setUserName(data.username || 'No Name');
         
                 // Datenbankoperationen...
@@ -137,7 +138,9 @@ const App: React.FC = () => {
         const updateUserPoints = async () => {
             try {
                 const userDoc = doc(db, 'users', userId);
+                console.log(`Updating user: ${userId} with points: ${points}`);  // Debug
                 await setDoc(userDoc, { points }, { merge: true });
+                console.log('User points updated successfully');  // Debug
             } catch (error) {
                 console.error('Error updating user points:', error);
             }
