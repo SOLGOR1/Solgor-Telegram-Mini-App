@@ -8,10 +8,21 @@ import Mine from './icons/Mine';
 import Friends from './icons/Friends';
 import Coins from './icons/Coins';
 import { db, doc, setDoc } from './firebase'; // Importiere doc und setDoc
+import WebApp from '@twa-dev/sdk';
+
+// Define the interface for user data
+interface UserData {
+    id: number;
+    first_name: string;
+    last_name?: string;
+    username?: string;
+    language_code: string;
+    is_premium?: boolean;
+  }
 
 // Debounce Funktion zur Vermeidung häufiger Firestore-Updates
 const debounce = (func: Function, delay: number) => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     return (...args: any[]) => {
         clearTimeout(timeout);
         timeout = setTimeout(() => func(...args), delay);
@@ -35,6 +46,7 @@ const App: React.FC = () => {
         100000000, 1000000000
     ];
 
+    const [userData, setUserData] = useState<UserData | null>(null);
     const [levelIndex, setLevelIndex] = useState(6);
     const [points, setPoints] = useState(22749365);
     const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
@@ -46,6 +58,14 @@ const App: React.FC = () => {
     const [dailyComboTimeLeft, setDailyComboTimeLeft] = useState("");
     const [userName, setUserName] = useState('Loading...');
     const [userId, setUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (WebApp.initDataUnsafe.user) {
+            setUserData(WebApp.initDataUnsafe.user as UserData);
+            setUserName(WebApp.initDataUnsafe.user.first_name);
+            setUserId(String(WebApp.initDataUnsafe.user.id));
+        }
+    }, []);
 
     // Berechnung der verbleibenden Zeit bis zur nächsten Belohnung
     const calculateTimeLeft = (targetHour: number) => {

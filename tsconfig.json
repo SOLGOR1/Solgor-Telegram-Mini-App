@@ -12,6 +12,6 @@
     "moduleResolution": "node", // Modulerkennung wie in Node.js
     "resolveJsonModule": true // Unterstützung für das Importieren von JSON-Modulen
   },
-  "include": ["src/**/*.ts"], // Alle TypeScript-Dateien im src-Verzeichnis einbeziehen
+  "include": ["src/**/*.ts", "twa-dev-sdk.d.ts"], // Alle TypeScript-Dateien im src-Verzeichnis einbeziehen
   "exclude": ["node_modules"] // node_modules ausschließen
 }
